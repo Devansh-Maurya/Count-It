@@ -17,6 +17,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="16dp"
+        android:src="@android:drawable/ic_menu_edit"
         android:id="@+id/add_category"/>
 
 </RelativeLayout>

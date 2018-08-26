@@ -64,32 +64,13 @@ public class ItemsListActivity extends AppCompatActivity {
        itemsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
            @Override
            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-               String itemName = (String) ((TextView)findViewById(R.id.item_name)).getText();
+               String itemName = (String) ((TextView)view.findViewById(R.id.item_name)).getText();
                showDeleteConfirmationDialog(itemName);
                return false;
            }
        });
 
-        final String[] projection = {Item._ID, Item.COLUMN_ITEM_NAME, Item.COLUMN_ITEM_COUNT, Item.COLUMN_ITEM_COLOR};
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                Cursor cursor = getContentResolver().query(itemsCategoryUri, projection, null, null,
-                        null);
-
-                ItemCursorAdapter adapter = new ItemCursorAdapter(ItemsListActivity.this, cursor, 0);
-                itemsListView.setAdapter(adapter);
-            }
-        });
-
-    }
-
-    private int decrementItemCount(int itemCount) {
-        return --itemCount;
-    }
-
-    private int incrementItemCount(int itemCount) {
-        return ++itemCount;
+       setCursorAdapter();
     }
 
     @Override
@@ -123,8 +104,7 @@ public class ItemsListActivity extends AppCompatActivity {
     }
 
     public void deleteItem(String itemName) {
-        int rowsDeleted = getContentResolver().delete(itemsCategoryUri,
-                Item.COLUMN_ITEM_NAME + "=?",
+        int rowsDeleted = getContentResolver().delete(itemsCategoryUri, Item.COLUMN_ITEM_NAME + "=?",
                 new String[] {itemName});
 
         if (rowsDeleted == 1) {
@@ -141,6 +121,7 @@ public class ItemsListActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 deleteItem(itemName);
+                setCursorAdapter();
                 //finish();
             }
         });
@@ -155,6 +136,29 @@ public class ItemsListActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void setCursorAdapter() {
+        final String[] projection = {Item._ID, Item.COLUMN_ITEM_NAME, Item.COLUMN_ITEM_COUNT, Item.COLUMN_ITEM_COLOR};
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Cursor cursor = getContentResolver().query(itemsCategoryUri, projection, null, null,
+                        null);
+
+                ItemCursorAdapter adapter = new ItemCursorAdapter(ItemsListActivity.this, cursor, 0);
+                itemsListView.setAdapter(adapter);
+            }
+        });
+    }
+
+
+    private int decrementItemCount(int itemCount) {
+        return --itemCount;
+    }
+
+    private int incrementItemCount(int itemCount) {
+        return ++itemCount;
     }
 
     public class ItemCursorAdapter extends CursorAdapter {

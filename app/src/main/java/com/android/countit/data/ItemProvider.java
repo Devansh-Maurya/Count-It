@@ -33,13 +33,14 @@ public class ItemProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int match = sUriMatcher.match(uri);
         int rowsDeleted = 0;
+        itemsDbHelper = new ItemsDbHelper(getContext());
+        SQLiteDatabase database = itemsDbHelper.getWritableDatabase();
 
         switch (match) {
             case CATEGORIES:
+                rowsDeleted = database.delete(Category.CATEGORY_TABLE_NAME, selection, selectionArgs);
                 break;
             default:
-                itemsDbHelper = new ItemsDbHelper(getContext());
-                SQLiteDatabase database = itemsDbHelper.getWritableDatabase();
                 rowsDeleted = database.delete(uri.getPath().substring(1), selection, selectionArgs);
                 break;
         }

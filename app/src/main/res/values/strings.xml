@@ -17,10 +17,13 @@
     <string name="item_name_required">Item name is required</string>
     <string name="hint_after_empty_name">Please enter category name</string>
     <string name="delete_dialog_msg">Are you sure to delete item ?</string>
+    <string name="category_delete_dialog_msg">Are you sure to delete this category ?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="item_deletion_success">Item deleted successfully</string>
     <string name="item_deletion_failure">Item deletion failed</string>
+    <string name="category_deletion_success">Category deleted successfully</string>
+    <string name="category_deletion_failure">Category deletion failed</string>
 
     <string-array name="colors">
         <item>@string/holo_blue_light</item>
