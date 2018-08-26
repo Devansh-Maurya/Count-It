@@ -24,6 +24,8 @@
     <string name="item_deletion_failure">Item deletion failed</string>
     <string name="category_deletion_success">Category deleted successfully</string>
     <string name="category_deletion_failure">Category deletion failed</string>
+    <string name="item_updation_successful">Item updated successfully</string>
+    <string name="item_updation_failed">Item updated successfully</string>
 
     <string-array name="colors">
         <item>@string/holo_blue_light</item>

@@ -13,14 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +29,6 @@ import com.android.countit.data.ItemsContract.Item;
 public class ItemsListActivity extends AppCompatActivity {
 
     public static final int ITEMS_LIST_ACTIVITY_ID = 1;
-    public static final String URI_STRING = "uri_string";
 
     ListView itemsListView;
     Uri itemsCategoryUri;
@@ -78,36 +76,6 @@ public class ItemsListActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_save:
-                updateAllItems();
-        }
-        return true;
-    }
-
-    private void updateAllItems() {
-
-        ContentValues values = null;
-
-        for (int i = 0; updatedItemCounts.get(i+1, -1) != -1; i++) {
-            values = new ContentValues();
-            values.put(Item._ID, i+1);
-            values.put(Item.COLUMN_ITEM_COUNT, updatedItemCounts.get(i+1));
-
-            int rowsUpdated = getContentResolver().update(itemsCategoryUri, values,
-                    Item._ID + "=?", new String[] {Integer.toString(i+1)});
-        }
 
     }
 
@@ -169,6 +137,20 @@ public class ItemsListActivity extends AppCompatActivity {
         return ++itemCount;
     }
 
+    public void updateCategoryItem(int id, int itemCount) {
+        ContentValues values = new ContentValues();
+        values.put(Item.COLUMN_ITEM_COUNT, itemCount);
+
+        int rowsUpdated = getContentResolver().update(itemsCategoryUri, values,
+                Item._ID + "=?", new String[] {Integer.toString(id)});
+
+        if (rowsUpdated == -1) {
+            Toast.makeText(ItemsListActivity.this, R.string.item_updation_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ItemsListActivity.this, R.string.item_updation_successful, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public class ItemCursorAdapter extends CursorAdapter {
 
         private LayoutInflater itemLayoutInflater;
@@ -185,6 +167,7 @@ public class ItemsListActivity extends AppCompatActivity {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            LinearLayout textLinearLayout = (LinearLayout) view.findViewById(R.id.text_linear_layout);
             TextView itemNameTextView = (TextView) view.findViewById(R.id.item_name);
             final TextView itemCountTextView = (TextView) view.findViewById(R.id.item_count);
             Button decreaseButton = (Button) view.findViewById(R.id.decrease_button);
@@ -194,14 +177,14 @@ public class ItemsListActivity extends AppCompatActivity {
             itemNameTextView.setText(cursor.getString(cursor.getColumnIndex(Item.COLUMN_ITEM_NAME)));
             itemCountTextView.setText(cursor.getString(cursor.getColumnIndex(Item.COLUMN_ITEM_COUNT)));
 
-            final int currentItemid = cursor.getInt(cursor.getColumnIndex(Item._ID));
+            final int currentItemId = cursor.getInt(cursor.getColumnIndex(Item._ID));
 
             decreaseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int itemCount = decrementItemCount(Integer.parseInt((String) itemCountTextView.getText()));
                     itemCountTextView.setText(Integer.toString(itemCount));
-                    updatedItemCounts.append(currentItemid, itemCount);
+                    updatedItemCounts.append(currentItemId, itemCount);
                 }
             });
 
@@ -210,7 +193,14 @@ public class ItemsListActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     int itemCount = incrementItemCount(Integer.parseInt((String) itemCountTextView.getText()));
                     itemCountTextView.setText(Integer.toString(itemCount));
-                    updatedItemCounts.append(currentItemid, itemCount);
+                    updatedItemCounts.append(currentItemId, itemCount);
+                }
+            });
+
+            textLinearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    updateCategoryItem(currentItemId, Integer.parseInt((String)itemCountTextView.getText()));
                 }
             });
         }
