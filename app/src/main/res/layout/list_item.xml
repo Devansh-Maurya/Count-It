@@ -4,59 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:longClickable="true">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="-"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:focusable="false"
+        android:id="@+id/decrease_button"/>
+
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:focusable="false">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Item"
-            android:layout_weight="1"
+            tools:textColor="@android:color/darker_gray"
             android:textAppearance="?android:textAppearanceLarge"
             android:textColor="@android:color/white"
             android:id="@+id/item_name" />
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             tools:text="4"
-            android:textAppearance="?android:textAppearanceLarge"
+            tools:textColor="@android:color/darker_gray"
+            android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@android:color/white"
             android:gravity="end"
             android:id="@+id/item_count"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="16dp">
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="-"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:focusable="false"
-            android:id="@+id/decrease_button"/>
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="+"
-            android:focusable="false"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:id="@+id/increase_button"/>
-
-    </LinearLayout>
-
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="+"
+        android:focusable="false"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:id="@+id/increase_button"/>
 </LinearLayout>
