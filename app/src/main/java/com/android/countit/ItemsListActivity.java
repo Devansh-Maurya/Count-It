@@ -30,6 +30,7 @@ import com.android.countit.data.ItemsContract.Item;
 public class ItemsListActivity extends AppCompatActivity {
 
     public static final int ITEMS_LIST_ACTIVITY_ID = 1;
+    public static final String URI_STRING = "uri_string";
 
     ListView itemsListView;
     Uri itemsCategoryUri;
@@ -46,6 +47,7 @@ public class ItemsListActivity extends AppCompatActivity {
 
         Intent newItemsListIntent = getIntent();
         itemsCategoryUri = newItemsListIntent.getData();
+
 
         FloatingActionButton floatingActionButton = (FloatingActionButton)
                 findViewById(R.id.add_item);
@@ -71,6 +73,12 @@ public class ItemsListActivity extends AppCompatActivity {
        });
 
        setCursorAdapter();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
     @Override

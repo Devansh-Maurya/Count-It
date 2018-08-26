@@ -19,6 +19,7 @@
             tools:text="Item"
             android:layout_weight="1"
             android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@android:color/white"
             android:id="@+id/item_name" />
 
         <TextView
@@ -26,7 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             tools:text="4"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@android:color/white"
             android:gravity="end"
             android:id="@+id/item_count"/>
     </LinearLayout>

@@ -105,7 +105,9 @@ public class EditorActivity extends AppCompatActivity {
 
             Uri newItemUri = getContentResolver().insert(itemsCategoryUri, newItemValues);
 
-            navigateUpTo(new Intent(EditorActivity.this, ItemsListActivity.class));
+            Intent intentToPreviousActivity = new Intent(EditorActivity.this, ItemsListActivity.class);
+            intentToPreviousActivity.setData(itemsCategoryUri);
+            navigateUpTo(intentToPreviousActivity);
         }
 
 
