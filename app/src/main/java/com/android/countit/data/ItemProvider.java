@@ -88,8 +88,9 @@ public class ItemProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        itemsDbHelper = new ItemsDbHelper(getContext());
+        SQLiteDatabase database = itemsDbHelper.getWritableDatabase();
+        return database.update(uri.getPath().substring(1), values, selection, selectionArgs);
     }
 
     private Uri insertCategoryEntry(Uri uri, ContentValues values) {
