@@ -2,25 +2,28 @@ package com.android.countit;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.countit.data.ItemsContract.Item;
 
@@ -57,6 +60,15 @@ public class ItemsListActivity extends AppCompatActivity {
         });
 
        itemsListView = (ListView) findViewById(R.id.items_list_view);
+
+       itemsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+           @Override
+           public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+               String itemName = (String) ((TextView)findViewById(R.id.item_name)).getText();
+               showDeleteConfirmationDialog(itemName);
+               return false;
+           }
+       });
 
         final String[] projection = {Item._ID, Item.COLUMN_ITEM_NAME, Item.COLUMN_ITEM_COUNT, Item.COLUMN_ITEM_COLOR};
         new Handler().post(new Runnable() {
@@ -108,6 +120,41 @@ public class ItemsListActivity extends AppCompatActivity {
                     Item._ID + "=?", new String[] {Integer.toString(i+1)});
         }
 
+    }
+
+    public void deleteItem(String itemName) {
+        int rowsDeleted = getContentResolver().delete(itemsCategoryUri,
+                Item.COLUMN_ITEM_NAME + "=?",
+                new String[] {itemName});
+
+        if (rowsDeleted == 1) {
+            Toast.makeText(this, R.string.item_deletion_success, Toast.LENGTH_SHORT).show();
+        } else if (rowsDeleted == -1) {
+            Toast.makeText(this, R.string.item_deletion_failure, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showDeleteConfirmationDialog(final String itemName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                deleteItem(itemName);
+                //finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (dialogInterface != null) {
+                    dialogInterface.dismiss();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     public class ItemCursorAdapter extends CursorAdapter {

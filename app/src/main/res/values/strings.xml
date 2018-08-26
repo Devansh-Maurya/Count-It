@@ -16,6 +16,11 @@
     <string name="category_name_required">Category name is required</string>
     <string name="item_name_required">Item name is required</string>
     <string name="hint_after_empty_name">Please enter category name</string>
+    <string name="delete_dialog_msg">Are you sure to delete item ?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="item_deletion_success">Item deleted successfully</string>
+    <string name="item_deletion_failure">Item deletion failed</string>
 
     <string-array name="colors">
         <item>@string/holo_blue_light</item>

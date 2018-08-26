@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.countit.R;
 import com.android.countit.data.ItemsContract.Category;
 
 public class ItemProvider extends ContentProvider {
@@ -30,8 +31,19 @@ public class ItemProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        int match = sUriMatcher.match(uri);
+        int rowsDeleted = 0;
+
+        switch (match) {
+            case CATEGORIES:
+                break;
+            default:
+                itemsDbHelper = new ItemsDbHelper(getContext());
+                SQLiteDatabase database = itemsDbHelper.getWritableDatabase();
+                rowsDeleted = database.delete(uri.getPath().substring(1), selection, selectionArgs);
+                break;
+        }
+        return rowsDeleted;
     }
 
     @Override
