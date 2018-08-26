@@ -12,6 +12,10 @@
     <string name="holo_orange_light">Holo Orange Light</string>
     <string name="holo_purple_light">Holo Purple Light</string>
     <string name="holo_red_light">Holo Red Light</string>
+    <string name="action_save">Save</string>
+    <string name="category_name_required">Category name is required</string>
+    <string name="item_name_required">Item name is required</string>
+    <string name="hint_after_empty_name">Please enter category name</string>
 
     <string-array name="colors">
         <item>@string/holo_blue_light</item>

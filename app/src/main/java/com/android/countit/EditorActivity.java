@@ -8,6 +8,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,20 +36,6 @@ public class EditorActivity extends AppCompatActivity {
 
         itemsCategoryUri = getIntent().getData();
 
-        FloatingActionButton doneFloatingActionButton = (FloatingActionButton)
-                findViewById(R.id.done);
-        doneFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (itemsCategoryUri == null) {
-                    createCategoryTable();
-                } else {
-                    insertNewItem();
-                }
-                navigateUpTo(new Intent(EditorActivity.this, MainActivity.class));
-            }
-        });
-
         colorSpinner = (Spinner) findViewById(R.id.spinner_color);
         setupSpinner();
 
@@ -67,22 +55,28 @@ public class EditorActivity extends AppCompatActivity {
         String categoryName = nameEditText.getText().toString().trim();
         Uri categoryUri = Uri.withAppendedPath(ItemsContract.BASE_CONTENT_URI, Category.CATEGORY_TABLE_NAME);
 
-        ContentValues values = new ContentValues();
-        values.put(Category.COLUMN_CATEGORY_NAME, categoryName);
-        values.put(Category.COLUMN_CATEGORY_COLOR, color);
+        if (categoryName.equals("")) {
+            nameEditText.setError(getString(R.string.category_name_required));
+            nameEditText.setHint(getString(R.string.hint_after_empty_name));
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(Category.COLUMN_CATEGORY_NAME, categoryName);
+            values.put(Category.COLUMN_CATEGORY_COLOR, color);
 
-        String queryCreateTable = "CREATE TABLE " + categoryName + " ( "
-                + Item._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + Item.COLUMN_ITEM_NAME + " TEXT NOT NULL, "
-                + Item.COLUMN_ITEM_COLOR + " INTEGER NOT NULL, "
-                + Item.COLUMN_ITEM_COUNT + " INTEGER DEFAULT 0); ";
+            String queryCreateTable = "CREATE TABLE " + categoryName + " ( "
+                    + Item._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + Item.COLUMN_ITEM_NAME + " TEXT NOT NULL, "
+                    + Item.COLUMN_ITEM_COLOR + " INTEGER NOT NULL, "
+                    + Item.COLUMN_ITEM_COUNT + " INTEGER DEFAULT 0); ";
 
-        ItemsDbHelper itemsDbHelper = new ItemsDbHelper(this);
-        SQLiteDatabase database = itemsDbHelper.getWritableDatabase();
-        database.execSQL(queryCreateTable);
+            ItemsDbHelper itemsDbHelper = new ItemsDbHelper(this);
+            SQLiteDatabase database = itemsDbHelper.getWritableDatabase();
+            database.execSQL(queryCreateTable);
 
+            Uri newCategoryUri = getContentResolver().insert(categoryUri, values);
 
-        Uri newCategoryUri = getContentResolver().insert(categoryUri, values);
+            navigateUpTo(new Intent(EditorActivity.this, MainActivity.class));
+        }
     }
 
     private void insertNewItem() {
@@ -91,14 +85,30 @@ public class EditorActivity extends AppCompatActivity {
         EditText initialCountEditText = (EditText) findViewById(R.id.edit_initial_count);
 
         String itemName = itemNameEditText.getText().toString().trim();
-        int initialCount = Integer.parseInt(initialCountEditText.getText().toString().trim());
 
-        ContentValues newItemValues = new ContentValues();
-        newItemValues.put(Item.COLUMN_ITEM_NAME, itemName);
-        newItemValues.put(Item.COLUMN_ITEM_COLOR, color);
-        newItemValues.put(Item.COLUMN_ITEM_COUNT, initialCount);
+        String initialCountText = initialCountEditText.getText().toString().trim();
+        int initialCount;
+        if (initialCountText.equals("")) {
+            initialCount = 0;
+        } else {
+            initialCount = Integer.parseInt(initialCountText);
+        }
 
-        Uri newItemUri = getContentResolver().insert(itemsCategoryUri, newItemValues);
+        if (itemName.equals("")) {
+            itemNameEditText.setError(getString(R.string.item_name_required));
+            itemNameEditText.setHint(getString(R.string.hint_after_empty_name));
+        } else {
+            ContentValues newItemValues = new ContentValues();
+            newItemValues.put(Item.COLUMN_ITEM_NAME, itemName);
+            newItemValues.put(Item.COLUMN_ITEM_COLOR, color);
+            newItemValues.put(Item.COLUMN_ITEM_COUNT, initialCount);
+
+            Uri newItemUri = getContentResolver().insert(itemsCategoryUri, newItemValues);
+
+            navigateUpTo(new Intent(EditorActivity.this, ItemsListActivity.class));
+        }
+
+
     }
 
     private void setupSpinner() {
@@ -132,5 +142,25 @@ public class EditorActivity extends AppCompatActivity {
                 color = getColor(R.color.holo_purple);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_editor, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                if (itemsCategoryUri == null) {
+                    createCategoryTable();
+                } else {
+                    insertNewItem();
+                }
+                break;
+        }
+        return true;
     }
 }
